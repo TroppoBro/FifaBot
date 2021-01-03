@@ -27,7 +27,7 @@ def login(driver):
     driver.add_cookie({'name': 'JSESSIONID', 'value': 'B8C54F6BB740D58BC2D5A2D7105F2CB5.prdaccounts-60'})
     time.sleep(1)  # chargement de la page
 
-    time.sleep(5)  # chargement de la page
+    time.sleep(2)  # chargement de la page
     driver.go_to('https://accounts.ea.com/')
     driver.add_cookie({'name': 'PLAY_LANG', 'value': 'en'})
     driver.add_cookie({'name': 'remid', 'value': 'TUU6Z0NQNDFrNkJRZG1qeFR2Y1hVRXJrbTQyc3c1RGhmMVh5R2NBSGpTUTowMTAyMDA1NDE.Eqfdq9FJPblXubzm3jLhp6aj2vylqlct3SrVdCMd'})
@@ -39,13 +39,13 @@ def login(driver):
     time.sleep(1)
     driver.go_to('https://www.ea.com/fifa/ultimate-team/web-app/')
     # loading
-    time.sleep(5)
+    time.sleep(10)
     driver.click('Login')
     # loading
     time.sleep(3)
 
     # login
-    driver.type('PASSWORD', into='Password', id='passwordFieldId')
+    driver.type('Scaracca107', into='Password', id='passwordFieldId')
     time.sleep(2)
     driver.click('Log In')
     # end login
@@ -60,6 +60,22 @@ def credits(driver):
     coins = driver.driver.find_element_by_class_name('view-navbar-currency-coins').text
     a_coins = int((coins.replace(',', '')).replace(' ', ''))
     print('credits : ', a_coins)
+
+def market_value(player_name):
+    r=requests.get()
+    #TO DO
+    #Crea dizionario con i vari tipi di carta su fifa e futbin e associa i tipi uguali
+    #apri una nuova tab con il nome del giocatore. Chiedi prima se vuole il prezzo da futbin
+    #cerca il giocatore su https://www.futbin.com/21/players su questa barra id="players_search"
+    #usa questo dropdwon class="dropdown-menu dropdown-menu2 general_dd" per cercare la versione (dal dizionario)
+    #<a class="dropdown-item dropdown-item-rt static-filter".text per trovare il tipo e poi fare .click
+    #fino a qua apre la pagina del giocatore
+    #dopo si può prendere il prezzo e usarlo in altri modi tipo autovendita a quel prezzo o scriverlo in console
+    #data-player-resource cerca nella pagina futbin del giocatore per trovare l'ID univoco
+    #vai a questo link https://www.futbin.com/21/playerPrices?player=ID_UNIVOCO
+    #Prendi il prezzo da quella pagina guardando dal francese
+
+
 
 
 def buy_player(driver):
@@ -76,7 +92,8 @@ def buy_player(driver):
     # search player
     letter = 0
     player_name = input("Who you want to buy? ")
-    if player_name != 'no':
+    print(market_value(player_name))
+    if player_name != 'no' or 'none' or 'no one' or 'any':
         time.sleep(1.5)
         driver.type(player_name[0].replace('-', ' '), into='Type Player Name', clear=False)
         while letter < len(player_name):
@@ -88,7 +105,7 @@ def buy_player(driver):
         driver.click(classname="btn-text", number=8)
 
     # price
-    price_to_buy = int(input("How much do you want to buy? "))
+    price_to_buy = int(input("For how much do you want to buy? "))
     driver.type(price_to_buy, classname="numericInput", number=4)
 
     # count
@@ -100,8 +117,12 @@ def buy_player(driver):
     # numbers of research
     stop = int(input('How many searches do you want to do? '))
 
-    # price to resell
-    # price = input('For how much do you want to resell it? ')
+    # Selection between transfer list and sell it now
+    selection = int(input('Insert 1 if you want to sell it new or 0 if you want to send it to transfer list '))
+
+    if selection:
+        # price to resell
+        price = input('For how much do you want to resell it? ')
 
     # start of research
     attemp = 0
@@ -122,11 +143,21 @@ def buy_player(driver):
                     time.sleep(2)
 
                     if driver.exists('Send to Transfer List'):
-                        driver.click('Send to Transfer List')
-                        # driver.type(price, classname="numericInput filled", number=2)
-                        # driver.type(str((int(price)-100)), classname="numericInput filled", number=1)
-                        # driver.click('List for Transfer')
-                        print(f'You got {player_name}!')
+                        if selection == 1:
+                            time.sleep(1)
+                            driver.click('List on Transfer Market')
+                            time.sleep(0.5)
+                            if web.exists(classname="numericInput"):
+                                web.click(classname="numericInput", number=2)
+                                driver.type(price, classname="numericInput", number=2, clear=False)
+                                web.click(classname="numericInput", number=1)
+                                driver.type(str((int(price)-100)), classname="numericInput", number=1, clear=False)
+                            time.sleep(2)
+                            driver.click('List for Transfer')
+                            print(f'You got {player_name}!')
+                        else:
+                            driver.click('Send to Transfer List')
+                            print(f'You got {player_name}!')
                     else:
                         print('Miss! :(')
             except:
