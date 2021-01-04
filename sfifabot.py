@@ -202,62 +202,67 @@ def buy_player(driver):
 
 
 def sell_player(driver):
-    if driver.exists('Transfers'):
-        driver.click('Transfers')
-        time.sleep(0.7)
+    
+    try:
+        if driver.exists('Transfers'):
+            driver.click('Transfers')
+            time.sleep(0.7)
 
-    # transfer market
-    if driver.exists('TRANSFER LIST'):
-        driver.click('TRANSFER LIST')
-        time.sleep(0.7)
+        # transfer market
+        if driver.exists('TRANSFER LIST'):
+            driver.click('TRANSFER LIST')
+            time.sleep(0.7)
 
-    choice = 0
+        choice = 0
 
-    while driver.exists(classname='ut-navigation-button-control') and driver.exists('List on Transfer Market'):
+        while driver.exists(classname='ut-navigation-button-control') and driver.exists('List on Transfer Market'):
 
-        # clear sold
-        if driver.exists('Clear Sold'):
-            driver.click('Clear Sold')
-            time.sleep(0.2)
+            # clear sold
+            if driver.exists('Clear Sold'):
+                driver.click('Clear Sold')
+                time.sleep(0.5)
 
-        # relist
-        if driver.exists('Re-List All'):
-            driver.click('Re-List All')
-            time.sleep(0.6)
-            if driver.exists('Yes'):
-                driver.click('Yes')
-                time.sleep(0.4)
+            # relist
+            if driver.exists('Re-List All'):
+                driver.click('Re-List All')
+                time.sleep(0.6)
+                if driver.exists('Yes'):
+                    driver.click('Yes')
+                    time.sleep(0.4)
 
-        # click on 'List on Transfer Market'
-        if driver.exists('List on Transfer Market'):
-            driver.click('List on Transfer Market')
+            # click on 'List on Transfer Market'
+            if driver.exists('List on Transfer Market'):
+                driver.click('List on Transfer Market')
+                time.sleep(0.5)
+
+                # set the price
+                if choice == 0 or choice == 1:
+
+                    same = 'y'
+                    if choice == 1:
+                        same = input("Do you want change the price? [y/n] ")
+
+                    if same != 'n':
+                        start_price = input("'Start price'? ")
+                        buy_now_price = input("'Buy now price'? ")
+
+                    if choice == 0:
+                        choice = int(input("""1. Set the price for each
+    2. Same price for every player
+    """))
+
+                # sell
+                if driver.exists(classname="numericInput"):
+                    web.click(classname="numericInput", number=2)
+                    driver.type(buy_now_price, classname="numericInput", number=2, clear=False)
+                    web.click(classname="numericInput", number=1)
+                    driver.type(start_price, classname="numericInput", number=1, clear=False)
+                    driver.click('List for Transfer')
+
             time.sleep(0.5)
-
-            # set the price
-            if choice == 0 or choice == 1:
-
-                same = 'y'
-                if choice == 1:
-                    same = input("Do you want change the price? [y/n] ")
-
-                if same != 'n':
-                    start_price = input("'Start price'? ")
-                    buy_now_price = input("'Buy now price'? ")
-
-                if choice == 0:
-                    choice = int(input("""1. Set the price for each
-2. Same price for every player
-"""))
-
-            # sell
-            if driver.exists(classname="numericInput"):
-                web.click(classname="numericInput", number=2)
-                driver.type(buy_now_price, classname="numericInput", number=2, clear=False)
-                web.click(classname="numericInput", number=1)
-                driver.type(start_price, classname="numericInput", number=1, clear=False)
-                driver.click('List for Transfer')
-
-        time.sleep(0.5)
+    except:
+        driver.click('Home')
+        print('Interrupted')
 
     print('FINISH')
 # main
