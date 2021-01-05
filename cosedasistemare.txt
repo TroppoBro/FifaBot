@@ -1,0 +1,6 @@
+1. Quando viene scritto 'any', scrive roprio 'any'
+2. Interfaccia
+3. Aste
+4. Problema dei cookie
+5. Aggiungere le statistiche
+6. Profitto quando viene spento il programma
